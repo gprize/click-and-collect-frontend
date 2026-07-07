@@ -7,6 +7,7 @@ import PaiementMethodeView from '@/features/commande/components/PaiementMethodeV
 import PaiementAttenteView from '@/features/commande/components/PaiementAttenteView.vue'
 import CommandeConfirmationView from '@/features/commande/components/CommandeConfirmationView.vue'
 import MagasinDashboardView from '@/features/magasin/components/MagasinDashboardView.vue'
+import NotFoundView from '@/features/shared/components/NotFoundView.vue'
 import { useSessionStore } from '@/stores/session'
 
 const router = createRouter({
@@ -19,13 +20,14 @@ const router = createRouter({
     { path: '/commandes/:commandeId/paiement', name: 'paiement-methode', component: PaiementMethodeView },
     { path: '/commandes/:commandeId/paiement/:operateur', name: 'paiement-attente', component: PaiementAttenteView },
     { path: '/commandes/:commandeId/confirmation', name: 'commande-confirmation', component: CommandeConfirmationView },
-    { path: '/magasins/:magasinId/dashboard', name: 'magasin-dashboard', component: MagasinDashboardView }
+    { path: '/magasins/:magasinId/dashboard', name: 'magasin-dashboard', component: MagasinDashboardView },
+    { path: '/:pathMatch(.*)*', name: 'not-found', component: NotFoundView }
   ]
 })
 
 router.beforeEach((to) => {
   const session = useSessionStore()
-  if (to.name !== 'identification' && !session.utilisateurId) {
+  if (to.name !== 'identification' && to.name !== 'not-found' && !session.utilisateurId) {
     return { name: 'identification' }
   }
 })
