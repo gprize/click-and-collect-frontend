@@ -13,7 +13,6 @@ function retourAccueil() {
     <div class="ticket mb-6">
       <div class="ticket-eyebrow mb-2">Erreur 404</div>
       <div class="ticket-code text-h2 text-primary mb-2">🛒💨</div>
-      <p class="text-body-1 mb-1">Cette page a quitté le magasin</p>
       <p class="text-body-2" style="color: var(--color-muted)">
         La page que vous cherchez n'existe pas ou plus.
       </p>
