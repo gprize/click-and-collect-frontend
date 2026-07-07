@@ -1,0 +1,68 @@
+:root {
+  --font-display: 'Space Grotesk', sans-serif;
+  --font-body: 'Inter', sans-serif;
+  --font-mono: 'Space Mono', monospace;
+  --color-muted: #6B7266;
+}
+
+body {
+  font-family: var(--font-body);
+}
+
+h1, h2, h3,
+.text-h3, .text-h5, .text-h6,
+.v-card-title {
+  font-family: var(--font-display) !important;
+  letter-spacing: -0.01em;
+}
+
+.prix {
+  font-family: var(--font-mono);
+  font-weight: 700;
+}
+
+/* --- Ticket de retrait (signature) --- */
+.ticket {
+  position: relative;
+  background: #fff;
+  border: 1.5px dashed rgba(33, 38, 31, 0.3);
+  border-radius: 8px;
+  padding: 40px 24px;
+  transform: rotate(-0.6deg);
+}
+
+.ticket::before,
+.ticket::after {
+  content: '';
+  position: absolute;
+  width: 22px;
+  height: 22px;
+  background: #F3EFE3;
+  border-radius: 50%;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.ticket::before { left: -11px; }
+.ticket::after { right: -11px; }
+
+.ticket-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+}
+
+.ticket-code {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  letter-spacing: 0.1em;
+}
+
+.custom-underline {
+  text-decoration: underline;
+  text-decoration-color: #3B6B3E;
+  text-decoration-thickness: 3px;
+  text-underline-offset: 8px;
+}
