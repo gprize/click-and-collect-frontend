@@ -12,7 +12,7 @@ export default defineConfig({
       registerType: 'autoUpdate',
       manifest: {
         name: 'Click & Collect',
-        short_name: 'C&C',
+        short_name: 'Click&Co',
         description: 'Faites vos courses en ligne, récupérez-les en magasin',
         theme_color: '#1D9E75',
         background_color: '#ffffff',
