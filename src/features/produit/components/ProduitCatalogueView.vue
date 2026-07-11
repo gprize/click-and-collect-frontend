@@ -15,8 +15,19 @@ const produits = ref<Produit[]>([])
 const magasin = ref<Magasin | null>(null)
 const chargement = ref(true)
 const erreur = ref<string | null>(null)
+const recherche = ref('')
 
-async function charger(magasinId: string) {
+let debounceTimer: ReturnType<typeof setTimeout> | undefined
+
+async function chargerProduits(magasinId: string, terme?: string) {
+  try {
+    produits.value = await fetchProduitsByMagasin(magasinId, terme)
+  } catch {
+    erreur.value = 'Impossible de charger le catalogue'
+  }
+}
+
+async function chargerTout(magasinId: string) {
   chargement.value = true
   erreur.value = null
   try {
@@ -33,13 +44,24 @@ async function charger(magasinId: string) {
   }
 }
 
-onMounted(() => charger(route.params.magasinId as string))
-watch(() => route.params.magasinId, (id) => charger(id as string))
+onMounted(() => chargerTout(route.params.magasinId as string))
+
+watch(() => route.params.magasinId, (id) => {
+  recherche.value = ''
+  chargerTout(id as string)
+})
+
+watch(recherche, (terme) => {
+  clearTimeout(debounceTimer)
+  debounceTimer = setTimeout(() => {
+    chargerProduits(route.params.magasinId as string, terme)
+  }, 300)
+})
 </script>
 
 <template>
   <v-container class="py-8">
-    <div class="d-flex justify-space-between align-center mb-0">
+    <div class="d-flex justify-space-between align-center" style="gap: 16px;">
       <h1 class="text-h5" style="margin: 0;">{{ magasin?.nom ?? '...' }}</h1>
       <v-btn
         variant="tonal"
@@ -55,13 +77,30 @@ watch(() => route.params.magasinId, (id) => charger(id as string))
       <v-icon icon="mdi-map-marker-outline" size="16" class="mr-1" />{{ magasin.adresse }}
     </p>
 
+    <v-text-field
+      v-model="recherche"
+      placeholder="Rechercher un produit..."
+      prepend-inner-icon="mdi-magnify"
+      variant="outlined"
+      density="comfortable"
+      clearable
+      class="mb-6"
+      hide-details
+    />
+
     <v-progress-circular v-if="chargement" indeterminate color="primary" />
     <v-alert v-else-if="erreur" type="error" :text="erreur" />
 
-    <v-row v-else>
-      <v-col v-for="produit in produits" :key="produit.id" cols="12" sm="6" md="4">
-        <ProduitCard :produit="produit" @ajouter="panier.ajouter" />
-      </v-col>
-    </v-row>
+    <template v-else>
+      <v-row v-if="produits.length > 0">
+        <v-col v-for="produit in produits" :key="produit.id" cols="12" sm="6" md="4">
+          <ProduitCard :produit="produit" @ajouter="panier.ajouter" />
+        </v-col>
+      </v-row>
+
+      <p v-else class="text-body-2 text-center mt-8" style="color: var(--color-muted)">
+        Aucun produit ne correspond à "{{ recherche }}"
+      </p>
+    </template>
   </v-container>
 </template>
