@@ -7,8 +7,9 @@ export interface LignePanier {
   nom: string
   prixUnitaire: number
   quantite: number
-  stockDisponible: number
 }
+
+const QUANTITE_MAX_PAR_LIGNE = 20
 
 export const usePanierStore = defineStore('panier', () => {
   const lignes = ref<LignePanier[]>([])
@@ -16,7 +17,7 @@ export const usePanierStore = defineStore('panier', () => {
   function ajouter(produit: Produit) {
     const existante = lignes.value.find((l) => l.produitId === produit.id)
     if (existante) {
-      if (existante.quantite < produit.quantiteStock) {
+      if (existante.quantite < QUANTITE_MAX_PAR_LIGNE) {
         existante.quantite++
       }
       return
@@ -25,8 +26,7 @@ export const usePanierStore = defineStore('panier', () => {
       produitId: produit.id,
       nom: produit.nom,
       prixUnitaire: produit.prix,
-      quantite: 1,
-      stockDisponible: produit.quantiteStock
+      quantite: 1
     })
   }
 
@@ -46,5 +46,5 @@ export const usePanierStore = defineStore('panier', () => {
     lignes.value.reduce((sum, l) => sum + l.quantite, 0)
   )
 
-  return { lignes, ajouter, retirer, viderPanier, total, nombreArticles }
+  return { lignes, ajouter, retirer, viderPanier, total, nombreArticles, QUANTITE_MAX_PAR_LIGNE }
 })

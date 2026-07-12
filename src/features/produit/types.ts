@@ -3,5 +3,5 @@ export interface Produit {
   magasinId: string
   nom: string
   prix: number
-  quantiteStock: number
+  disponible: boolean
 }

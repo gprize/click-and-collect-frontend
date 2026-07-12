@@ -4,6 +4,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { usePanierStore } from '@/stores/panier'
 import { useSessionStore } from '@/stores/session'
 import { creerCommande } from '../services/commandeService'
+import { usePanierStore } from '@/stores/panier'
 
 const route = useRoute()
 const router = useRouter()
@@ -13,9 +14,11 @@ const session = useSessionStore()
 const validationEnCours = ref(false)
 const erreur = ref<string | null>(null)
 
+const panier = usePanierStore()
+
 function augmenter(ligneId: string) {
   const ligne = panier.lignes.find((l) => l.produitId === ligneId)
-  if (ligne && ligne.quantite < ligne.stockDisponible) {
+  if (ligne && ligne.quantite < panier.QUANTITE_MAX_PAR_LIGNE) {
     ligne.quantite++
   }
 }
@@ -77,7 +80,7 @@ async function validerCommande() {
               icon="mdi-plus"
               size="small"
               variant="text"
-              :disabled="ligne.quantite >= ligne.stockDisponible"
+              :disabled="ligne.quantite >= panier.QUANTITE_MAX_PAR_LIGNE"
               @click="augmenter(ligne.produitId)"
             />
           </template>

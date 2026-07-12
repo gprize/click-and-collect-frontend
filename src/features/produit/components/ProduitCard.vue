@@ -17,12 +17,12 @@ const emit = defineEmits<{ ajouter: [produit: Produit] }>()
       </div>
 
       <v-chip
-        :color="produit.quantiteStock > 0 ? 'market-amber' : 'error'"
+        :color="produit.disponible ? 'market-amber' : 'error'"
         variant="flat"
         size="small"
         density="comfortable"
       >
-        {{ produit.quantiteStock > 0 ? `${produit.quantiteStock} en stock` : 'Rupture de stock' }}
+        {{ produit.disponible ? 'Disponible' : 'Rupture de stock' }}
       </v-chip>
     </v-card-text>
 
@@ -31,7 +31,7 @@ const emit = defineEmits<{ ajouter: [produit: Produit] }>()
         color="primary"
         variant="flat"
         block
-        :disabled="produit.quantiteStock === 0"
+        :disabled="!produit.disponible"
         @click="emit('ajouter', produit)"
       >
         Ajouter au panier
