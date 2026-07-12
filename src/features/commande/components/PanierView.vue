@@ -13,8 +13,6 @@ const session = useSessionStore()
 const validationEnCours = ref(false)
 const erreur = ref<string | null>(null)
 
-const panier = usePanierStore()
-
 function augmenter(ligneId: string) {
   const ligne = panier.lignes.find((l) => l.produitId === ligneId)
   if (ligne && ligne.quantite < panier.QUANTITE_MAX_PAR_LIGNE) {
