@@ -15,7 +15,7 @@ const erreur = ref<string | null>(null)
 
 function augmenter(ligneId: string) {
   const ligne = panier.lignes.find((l) => l.produitId === ligneId)
-  if (ligne && ligne.quantite < ligne.stockDisponible) {
+  if (ligne && ligne.quantite < panier.QUANTITE_MAX_PAR_LIGNE) {
     ligne.quantite++
   }
 }
@@ -77,7 +77,7 @@ async function validerCommande() {
               icon="mdi-plus"
               size="small"
               variant="text"
-              :disabled="ligne.quantite >= ligne.stockDisponible"
+              :disabled="ligne.quantite >= panier.QUANTITE_MAX_PAR_LIGNE"
               @click="augmenter(ligne.produitId)"
             />
           </template>
