@@ -4,7 +4,6 @@ import { useRoute, useRouter } from 'vue-router'
 import { usePanierStore } from '@/stores/panier'
 import { useSessionStore } from '@/stores/session'
 import { creerCommande } from '../services/commandeService'
-import { usePanierStore } from '@/stores/panier'
 
 const route = useRoute()
 const router = useRouter()
