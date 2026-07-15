@@ -42,6 +42,10 @@ onMounted(async () => {
         <div class="prix text-h6">{{ commande.total.toLocaleString('fr-FR') }} FCFA</div>
         <div class="ticket-eyebrow mt-1">Total payé</div>
       </div>
+
+      <v-btn variant="tonal" color="primary" :to="{ name: 'produits' }">
+        Retour au catalogue
+      </v-btn>
     </template>
   </v-container>
 </template>
