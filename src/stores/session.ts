@@ -1,27 +1,29 @@
 import { defineStore } from 'pinia'
-import { ref, watch } from 'vue'
+import { ref } from 'vue'
+import type { AuthResponse } from '@/features/utilisateur/services/authService'
+
+const MAGASIN_ID = import.meta.env.VITE_MAGASIN_ID as string
 
 export const useSessionStore = defineStore('session', () => {
-  const magasinId = ref<string | null>(localStorage.getItem('magasinId'))
+  const token = ref<string | null>(localStorage.getItem('token'))
   const utilisateurId = ref<string | null>(localStorage.getItem('utilisateurId'))
+  const magasinId = MAGASIN_ID
 
-  function selectionnerMagasin(id: string) {
-    magasinId.value = id
+  function definirSession(auth: AuthResponse) {
+    token.value = auth.token
+    utilisateurId.value = auth.utilisateurId
+    localStorage.setItem('token', auth.token)
+    localStorage.setItem('utilisateurId', auth.utilisateurId)
   }
 
-  function identifierUtilisateur(id: string) {
-    utilisateurId.value = id
+  function deconnecter() {
+    token.value = null
+    utilisateurId.value = null
+    localStorage.removeItem('token')
+    localStorage.removeItem('utilisateurId')
   }
 
-  watch(magasinId, (value) => {
-    if (value) localStorage.setItem('magasinId', value)
-    else localStorage.removeItem('magasinId')
-  })
+  const estConnecte = () => token.value !== null
 
-  watch(utilisateurId, (value) => {
-    if (value) localStorage.setItem('utilisateurId', value)
-    else localStorage.removeItem('utilisateurId')
-  })
-
-  return { magasinId, utilisateurId, selectionnerMagasin, identifierUtilisateur }
+  return { token, utilisateurId, magasinId, definirSession, deconnecter, estConnecte }
 })

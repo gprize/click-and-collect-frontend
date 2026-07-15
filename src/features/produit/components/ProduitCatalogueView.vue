@@ -1,15 +1,15 @@
 <script setup lang="ts">
 import { onMounted, ref, watch } from 'vue'
-import { useRoute } from 'vue-router'
 import { fetchProduitsByMagasin } from '../services/produitService'
 import { fetchMagasinById } from '@/features/magasin/services/magasinService'
 import { usePanierStore } from '@/stores/panier'
+import { useSessionStore } from '@/stores/session'
 import ProduitCard from './ProduitCard.vue'
 import type { Produit } from '../types'
 import type { Magasin } from '@/features/magasin/types'
 
-const route = useRoute()
 const panier = usePanierStore()
+const session = useSessionStore()
 
 const produits = ref<Produit[]>([])
 const magasin = ref<Magasin | null>(null)
@@ -19,21 +19,21 @@ const recherche = ref('')
 
 let debounceTimer: ReturnType<typeof setTimeout> | undefined
 
-async function chargerProduits(magasinId: string, terme?: string) {
+async function chargerProduits(terme?: string) {
   try {
-    produits.value = await fetchProduitsByMagasin(magasinId, terme)
+    produits.value = await fetchProduitsByMagasin(session.magasinId, terme)
   } catch {
     erreur.value = 'Impossible de charger le catalogue'
   }
 }
 
-async function chargerTout(magasinId: string) {
+async function chargerTout() {
   chargement.value = true
   erreur.value = null
   try {
     const [produitsData, magasinData] = await Promise.all([
-      fetchProduitsByMagasin(magasinId),
-      fetchMagasinById(magasinId)
+      fetchProduitsByMagasin(session.magasinId),
+      fetchMagasinById(session.magasinId)
     ])
     produits.value = produitsData
     magasin.value = magasinData
@@ -44,18 +44,11 @@ async function chargerTout(magasinId: string) {
   }
 }
 
-onMounted(() => chargerTout(route.params.magasinId as string))
-
-watch(() => route.params.magasinId, (id) => {
-  recherche.value = ''
-  chargerTout(id as string)
-})
+onMounted(chargerTout)
 
 watch(recherche, (terme) => {
   clearTimeout(debounceTimer)
-  debounceTimer = setTimeout(() => {
-    chargerProduits(route.params.magasinId as string, terme)
-  }, 300)
+  debounceTimer = setTimeout(() => chargerProduits(terme), 300)
 })
 </script>
 
@@ -63,12 +56,7 @@ watch(recherche, (terme) => {
   <v-container class="py-8">
     <div class="d-flex justify-space-between align-center" style="gap: 16px;">
       <h1 class="text-h5" style="margin: 0;">{{ magasin?.nom ?? '...' }}</h1>
-      <v-btn
-        variant="tonal"
-        color="primary"
-        prepend-icon="mdi-cart"
-        :to="{ name: 'panier', params: { magasinId: route.params.magasinId } }"
-      >
+      <v-btn variant="tonal" color="primary" prepend-icon="mdi-cart" :to="{ name: 'panier' }">
         Panier ({{ panier.nombreArticles }})
       </v-btn>
     </div>

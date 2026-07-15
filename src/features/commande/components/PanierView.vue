@@ -1,11 +1,10 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { useRouter } from 'vue-router'
 import { usePanierStore } from '@/stores/panier'
 import { useSessionStore } from '@/stores/session'
 import { creerCommande } from '../services/commandeService'
 
-const route = useRoute()
 const router = useRouter()
 const panier = usePanierStore()
 const session = useSessionStore()
@@ -32,14 +31,13 @@ function diminuer(ligneId: string) {
 }
 
 async function validerCommande() {
-  const magasinId = route.params.magasinId as string
   validationEnCours.value = true
   erreur.value = null
 
   try {
     const commande = await creerCommande({
       utilisateurId: session.utilisateurId!,
-      magasinId,
+      magasinId: session.magasinId,
       lignes: panier.lignes.map((l) => ({
         produitId: l.produitId,
         quantite: l.quantite
