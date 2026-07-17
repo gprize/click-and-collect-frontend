@@ -1,8 +1,12 @@
 <script setup lang="ts">
+import { computed } from 'vue'
+import { usePanierStore } from '@/stores/panier'
 import type { Produit } from '../types'
 
-defineProps<{ produit: Produit }>()
-const emit = defineEmits<{ ajouter: [produit: Produit] }>()
+const props = defineProps<{ produit: Produit }>()
+const panier = usePanierStore()
+
+const quantite = computed(() => panier.quantitePourProduit(props.produit.id))
 </script>
 
 <template>
@@ -28,14 +32,28 @@ const emit = defineEmits<{ ajouter: [produit: Produit] }>()
 
     <v-card-actions>
       <v-btn
+        v-if="quantite === 0"
         color="primary"
         variant="flat"
         block
         :disabled="!produit.disponible"
-        @click="emit('ajouter', produit)"
+        @click="panier.ajouter(produit)"
       >
         Ajouter au panier
       </v-btn>
+
+      <div v-else class="d-flex align-center justify-center" style="width: 100%; gap: 8px;">
+        <v-btn icon="mdi-minus" size="small" variant="tonal" color="primary" @click="panier.diminuer(produit.id)" />
+        <span class="text-h6" style="min-width: 24px; text-align: center;">{{ quantite }}</span>
+        <v-btn
+          icon="mdi-plus"
+          size="small"
+          variant="tonal"
+          color="primary"
+          :disabled="quantite >= panier.QUANTITE_MAX_PAR_LIGNE"
+          @click="panier.augmenter(produit.id)"
+        />
+      </div>
     </v-card-actions>
   </v-card>
 </template>

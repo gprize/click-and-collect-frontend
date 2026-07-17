@@ -12,24 +12,6 @@ const session = useSessionStore()
 const validationEnCours = ref(false)
 const erreur = ref<string | null>(null)
 
-function augmenter(ligneId: string) {
-  const ligne = panier.lignes.find((l) => l.produitId === ligneId)
-  if (ligne && ligne.quantite < panier.QUANTITE_MAX_PAR_LIGNE) {
-    ligne.quantite++
-  }
-}
-
-function diminuer(ligneId: string) {
-  const ligne = panier.lignes.find((l) => l.produitId === ligneId)
-  if (ligne) {
-    if (ligne.quantite <= 1) {
-      panier.retirer(ligneId)
-    } else {
-      ligne.quantite--
-    }
-  }
-}
-
 async function validerCommande() {
   validationEnCours.value = true
   erreur.value = null
@@ -69,14 +51,14 @@ async function validerCommande() {
           </v-list-item-subtitle>
 
           <template #append>
-            <v-btn icon="mdi-minus" size="small" variant="text" @click="diminuer(ligne.produitId)" />
+            <v-btn icon="mdi-minus" size="small" variant="text" @click="panier.diminuer(ligne.produitId)" />
             <span class="mx-2">{{ ligne.quantite }}</span>
             <v-btn
               icon="mdi-plus"
               size="small"
               variant="text"
               :disabled="ligne.quantite >= panier.QUANTITE_MAX_PAR_LIGNE"
-              @click="augmenter(ligne.produitId)"
+              @click="panier.augmenter(ligne.produitId)"
             />
           </template>
         </v-list-item>
