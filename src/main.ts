@@ -6,6 +6,7 @@ import App from './App.vue'
 import router from './router'
 import { creerVuetify } from './plugins/vuetify'
 import { useMagasinStore } from './stores/magasin'
+import { registerSW } from 'virtual:pwa-register'
 
 async function demarrer() {
   const app = createApp(App)
@@ -25,3 +26,10 @@ async function demarrer() {
 }
 
 demarrer()
+
+registerSW({
+  immediate: true,
+  onNeedRefresh() {
+    window.location.reload()
+  }
+})
